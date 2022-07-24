@@ -6,12 +6,14 @@
 
     <groupId>com.xaohii</groupId>
     <artifactId>EChat</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
         <module>common</module>
         <module>server</module>
         <module>client</module>
+        <module>api</module>
     </modules>
 
     <dependencies>
