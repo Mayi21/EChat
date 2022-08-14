@@ -1,6 +1,6 @@
-package entity;
+package cn.xaohii.common.entity;
 
-import enums.RespCodeEnum;
+import cn.xaohii.common.enums.RespCodeEnum;
 import lombok.Data;
 
 @Data

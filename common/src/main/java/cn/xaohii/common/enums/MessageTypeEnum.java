@@ -1,4 +1,4 @@
-package enums;
+package cn.xaohii.common.enums;
 
 /**
  * 消息类型的枚举类型：

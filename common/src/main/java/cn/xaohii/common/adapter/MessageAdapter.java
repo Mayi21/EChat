@@ -1,7 +1,7 @@
-package adapter;
+package cn.xaohii.common.adapter;
 
 
-import entity.Message;
+import cn.xaohii.common.entity.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

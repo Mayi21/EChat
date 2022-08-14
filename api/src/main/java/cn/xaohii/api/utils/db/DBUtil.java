@@ -1,4 +1,4 @@
-package cn.xaohii.api.utils;
+package cn.xaohii.api.utils.db;
 
 import org.springframework.stereotype.Service;
 

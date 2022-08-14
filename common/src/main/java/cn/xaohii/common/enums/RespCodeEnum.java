@@ -1,4 +1,4 @@
-package enums;
+package cn.xaohii.common.enums;
 
 public enum RespCodeEnum {
 	SUCCESS("success"),

@@ -1,4 +1,4 @@
-package entity;
+package cn.xaohii.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

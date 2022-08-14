@@ -1,4 +1,4 @@
-package entity;
+package cn.xaohii.common.entity;
 
 import lombok.Data;
 

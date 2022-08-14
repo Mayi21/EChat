@@ -1,5 +1,6 @@
-package cn.xaohii.api.utils.mail;
+package cn.xaohii.api.service;
 
+import cn.xaohii.api.utils.common.ReadProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -43,7 +43,8 @@ public class MailServiceImpl {
 	}
 
 	private Message getMessage() {
-		Properties mailProperties = readProperties();
+		ReadProperties readProperties = new ReadProperties();
+		Properties mailProperties = readProperties.getMailProperties();
 		try {
 			assert mailProperties != null;
 			String mail = mailProperties.getProperty("mail.username");
@@ -61,19 +62,6 @@ public class MailServiceImpl {
 			MimeMessage message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(mail));
 			return message;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	// 读取配置文件
-	private Properties readProperties() {
-		String propertiesFilePath = "properties/mail.properties";
-		Properties properties = new Properties();
-		try (InputStream inputStream = MailServiceImpl.class.getClassLoader().getResourceAsStream(propertiesFilePath)) {
-			properties.load(inputStream);
-			return properties;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

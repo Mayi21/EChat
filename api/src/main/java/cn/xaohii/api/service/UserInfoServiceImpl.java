@@ -1,7 +1,7 @@
-package cn.xaohii.api.controller;
+package cn.xaohii.api.service;
 
-import entity.AppResp;
-import entity.UserInfo;
+import cn.xaohii.common.entity.AppResp;
+import cn.xaohii.common.entity.UserInfo;
 import org.springframework.stereotype.Service;
 
 @Service
