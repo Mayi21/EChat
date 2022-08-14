@@ -1,7 +1,8 @@
-package cn.xaohii.utils.mail;
+package cn.xaohii.api.utils.mail;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -13,7 +14,7 @@ import java.util.Properties;
 /**
  * 功能之一：用来完成邮件发送的功能
  * */
-
+@Service
 public class MailServiceImpl {
 	protected static final Logger LOG = LoggerFactory.getLogger(MailServiceImpl.class);
 

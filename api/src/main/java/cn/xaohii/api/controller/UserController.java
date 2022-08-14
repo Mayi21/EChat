@@ -1,8 +1,8 @@
-package cn.xaohii.controller;
+package cn.xaohii.api.controller;
 
+import cn.xaohii.api.utils.mail.MailServiceImpl;
 import entity.AppResp;
 import entity.UserInfo;
-import cn.xaohii.utils.mail.MailServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

@@ -1,4 +1,4 @@
-package cn.xaohii.controller;
+package cn.xaohii.api.controller;
 
 import entity.AppResp;
 import entity.UserInfo;
