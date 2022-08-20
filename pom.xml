@@ -14,10 +14,12 @@
         <module>server</module>
         <module>client</module>
         <module>api</module>
+        <module>temp</module>
     </modules>
 
     <properties>
         <spring-version>5.3.21</spring-version>
+        <netty-version>4.1.68.Final</netty-version>
     </properties>
 
     <dependencies>
@@ -65,6 +67,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty-version}</version>
         </dependency>
     </dependencies>
 </project>
