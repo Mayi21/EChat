@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface UserInfoMapper {
 	List<UserInfo> queryAllUserInfo();
+
+	int insertUserData(UserInfo userInfo);
 }
