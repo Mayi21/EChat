@@ -33,4 +33,8 @@ public class UserInfoServiceImpl {
 		userInfo.setUpdateTime(date);
 		userInfoMapper.insertUserData(userInfo);
 	}
+
+	public void userLogin(UserInfo userInfo) {
+
+	}
 }

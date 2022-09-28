@@ -1,5 +1,9 @@
 package v2;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
@@ -16,6 +20,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.serialization.ClassResolver;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
@@ -23,6 +31,16 @@ public class NettyClient {
 	private String host;
 	private int port;
 	private Channel channel;
+
+	private Map<String, Channel> channelMap = new HashMap<>();
+
+	public synchronized void setChannel(String name, Channel channel) {
+		this.channelMap.put(name, channel);
+	}
+
+	public synchronized Map<String, Channel> getChannelMap() {
+		return this.channelMap;
+	}
 	private Bootstrap b = new Bootstrap();
 
 	public NettyClient(String host, int port) {
@@ -39,11 +57,9 @@ public class NettyClient {
 					@Override
 					protected void initChannel(SocketChannel socketChannel) throws Exception {
 						ChannelPipeline pipeline = socketChannel.pipeline();
-						pipeline.addLast(new DelimiterBasedFrameDecoder(Integer.MAX_VALUE,
-								Unpooled.copiedBuffer(System.getProperty("line.separator").getBytes())));
 						//字符串编码解码
-						pipeline.addLast("decoder", new StringDecoder());
-						pipeline.addLast("encoder", new StringEncoder());
+						pipeline.addLast("encoder", new ObjectEncoder());
+						pipeline.addLast("decoder", new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
 						//客户端的逻辑
 						pipeline.addLast("handler", new NettyClientHandler(NettyClient.this));
 
@@ -78,8 +94,42 @@ public class NettyClient {
 		return channel;
 	}
 
+	public void sendMsg(Message message) {
+		Map<String, Channel> channelMap = getChannelMap();
+		for (String channelName : channelMap.keySet()) {
+			try {
+				Channel channel = channelMap.get(channelName);
+				if (!channel.isActive()) {
+					continue;
+				}
+				channel.writeAndFlush(message);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public static void main(String[] args) {
-		NettyClient nettyClient = new NettyClient("127.0.0.1", 20803);
-		nettyClient.start();
+		Scanner scanner = new Scanner(System.in);
+		String hostName = "127.0.0.1";
+		int port = 20803;
+		NettyClient nettyClient = new NettyClient(hostName, port);
+		new Thread(){
+			@Override
+			public void run() {
+				nettyClient.start();
+			}
+		}.start();
+		while (true) {
+			String line = scanner.nextLine();
+			if ("\\q".equals(line.trim())) {
+				break;
+			}
+			Message message = new Message();
+			message.setSourceName("1");
+			message.setToName("2");
+			message.setMessage(line.trim());
+			nettyClient.sendMsg(message);
+		}
 	}
 }
