@@ -20,8 +20,12 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import org.omg.CORBA.PUBLIC_MEMBER;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyClient {
+	private final Logger LOG = LoggerFactory.getLogger(NettyClient.class);
 	private String host;
 
 	private int port;
@@ -128,9 +132,25 @@ public class NettyClient {
 		int port = 20803;
 		NettyClient nettyClient = new NettyClient(hostName, port);
 		threadManage(nettyClient);
+//		nettyClient.printOnUser();
 		nettyClient.loginHandler();
-		nettyClient.onlineUser();
 		nettyClient.menu();
+	}
+
+	public void printOnUser() {
+		new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					LOG.info(noToUserName.toString());
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		}.start();
 	}
 
 	public void menu() {
@@ -140,6 +160,8 @@ public class NettyClient {
 			mainMenu();
 			toUserId = scanner.nextInt();
 			if (toUserId == -1) {
+//				channel.writeAndFlush(getRegisterMessage());
+//				LOG.info("send register info");
 				continue;
 			}
 			System.out.printf("开始和【%s】愉快聊天%n", noToUserName.get(toUserId));
@@ -175,6 +197,16 @@ public class NettyClient {
 		return message;
 	}
 
+	public Message getRegisterMessage() {
+		Message message = new Message();
+		message.setUserId(userId);
+		message.setUserName(userName);
+		message.setType(1);
+		return message;
+	}
+
+
+
 	/**
 	 * 格式化输出当前在线的用户ID和用户名
 	 * */
@@ -192,13 +224,7 @@ public class NettyClient {
 	 * 获取注册消息
 	 * 设置当前用户ID、当前用户名字
 	 * */
-	public Message getRegisterMessage() {
-		Message message = new Message();
-		message.setUserId(userId);
-		message.setUserName(userName);
-		message.setType(1);
-		return message;
-	}
+
 
 
 	/**
@@ -234,23 +260,10 @@ public class NettyClient {
 			@Override
 			public void run() {
 				nettyClient.start();
+
 			}
 		};
 		clientThread.setName("客户端线程");
 		clientThread.start();
-
-//		Thread heartBeatThread = new Thread() {
-//			@Override
-//			public void run() {
-//				nettyClient.heartBeat();
-//				try {
-//					Thread.sleep(5);
-//				} catch (InterruptedException e) {
-//					throw new RuntimeException(e);
-//				}
-//			}
-//		};
-//		heartBeatThread.setName("心跳发送线程");
-//		heartBeatThread.start();
 	}
 }

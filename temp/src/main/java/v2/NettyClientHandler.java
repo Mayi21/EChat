@@ -19,7 +19,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<Message>{
 	protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) {
 		switch (message.getType()) {
 			case 0:
-				System.out.printf("%s 收到一条来自 %s 的消息：%s%n", message.getToUserName(),
+				System.out.printf("收到一条来自 %d.%s 的消息：%s%n", message.getUserId(),
 						message.getUserName(), message.getMessage());
 				break;
 			case 1:

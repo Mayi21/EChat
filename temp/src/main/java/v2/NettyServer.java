@@ -19,13 +19,30 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 public class NettyServer {
 	private int port = 20803;
 
-	//维护设备连接的map 用于推送消息
+	/**
+	 * user id 到channel的映射
+	 * */
 	private Map<Integer, Channel> channelMap = new HashMap<>();
 
+	/**
+	 * userid 到 username的映射
+	 * */
 	private Map<Integer, String> onlineIdToNameMap = new HashMap<>();
+
+	private Map<String, Channel> clientName2ChannelMap = new HashMap<>();
+
+	public synchronized void setClientName2ChannelMap(String clientName, Channel channel) {
+		clientName2ChannelMap.put(clientName, channel);
+	}
+
+	public Map<String, Channel> getClientName2ChannelMap() {
+		return this.clientName2ChannelMap;
+	}
 
 	public synchronized void setOnlineIdToNameMap(Integer userId, String userName) {
 		onlineIdToNameMap.put(userId, userName);
@@ -49,14 +66,13 @@ public class NettyServer {
 	 * 新用户上线后，需要将当前的在线进行更新
 	 * */
 	public void notifyOnlineMemChange() {
-		for (Integer userId : channelMap.keySet()) {
-			Channel channel = channelMap.get(userId);
+		for (String clientName : clientName2ChannelMap.keySet()) {
+			Channel channel = clientName2ChannelMap.get(clientName);
 			channel.writeAndFlush(getNotifyMessage());
 		}
 	}
 
 	public Message getNotifyMessage() {
-		Map<Integer, String> onlineIdToNameMap = getOnlineIdToNameMap();
 		String msg = JSON.toJSONString(onlineIdToNameMap);
 		Message message = new Message();
 		message.setMessage(msg);

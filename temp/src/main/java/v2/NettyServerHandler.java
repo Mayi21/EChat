@@ -27,6 +27,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message>{
 				nettyServer.setOnlineIdToNameMap(userId, message.getUserName());
 				System.out.println(userId + "注册成功");
 				nettyServer.notifyOnlineMemChange();
+				channelHandlerContext.writeAndFlush(nettyServer.getNotifyMessage());
 				break;
 			case 2:
 
@@ -43,6 +44,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message>{
 		Channel channel = ctx.channel();
 		String clientName = channel.remoteAddress().toString();
 		System.out.println("RemoteAddress:"+clientName+"active!");
+		nettyServer.setClientName2ChannelMap(clientName, channel);
 		// 获取当前在线的用户，发送给新上线的用户
 		channel.writeAndFlush(nettyServer.getNotifyMessage());
 	}
