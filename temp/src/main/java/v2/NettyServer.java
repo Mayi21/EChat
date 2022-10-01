@@ -2,7 +2,10 @@ package v2;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -19,27 +22,56 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 public class NettyServer {
 	private int port = 20803;
 
-	//维护设备在线的表
-	private Map<String, Integer> clientMap = new HashMap<>();
-
 	//维护设备连接的map 用于推送消息
-	private Map<String, Channel> channelMap = new HashMap<>();
+	private Map<Integer, Channel> channelMap = new HashMap<>();
 
-	public synchronized void setChannel(String name, Channel channel) {
-		this.channelMap.put(name, channel);
+	private Map<Integer, String> onlineIdToNameMap = new HashMap<>();
+
+	public synchronized void setOnlineIdToNameMap(Integer userId, String userName) {
+		onlineIdToNameMap.put(userId, userName);
 	}
 
-	public synchronized Map<String, Channel> getChannelMap() {
+	public Map<Integer, String> getOnlineIdToNameMap() {
+		return onlineIdToNameMap;
+	}
+
+
+	public synchronized void setChannel(Integer userId, Channel channel) {
+		this.channelMap.put(userId, channel);
+	}
+
+
+	public Map<Integer, Channel> getChannelMap() {
 		return this.channelMap;
+	}
+	/**
+	 * 上线通知
+	 * 新用户上线后，需要将当前的在线进行更新
+	 * */
+	public void notifyOnlineMemChange() {
+		for (Integer userId : channelMap.keySet()) {
+			Channel channel = channelMap.get(userId);
+			channel.writeAndFlush(getNotifyMessage());
+		}
+	}
+
+	public Message getNotifyMessage() {
+		Map<Integer, String> onlineIdToNameMap = getOnlineIdToNameMap();
+		String msg = JSON.toJSONString(onlineIdToNameMap);
+		Message message = new Message();
+		message.setMessage(msg);
+		message.setType(3);
+		return message;
 	}
 
 	//发送消息给下游设备
 	public void writeMsg(Message msg) {
-		Map<String, Channel> channelMap = getChannelMap();
+		Map<Integer, Channel> channelMap = getChannelMap();
 		try {
-			Channel channel = channelMap.get(msg.getToName());
+			Channel channel = channelMap.get(msg.getToUserId());
 			if (!channel.isActive()) {
 				System.out.println("it's not online");
+				channelMap.remove(msg.getToUserId());
 			}
 			channel.writeAndFlush(msg);
 		} catch (Exception e) {
@@ -84,14 +116,5 @@ public class NettyServer {
 				nettyServer.bind();
 			}
 		}.start();
-//		Scanner scanner = new Scanner(System.in);
-//		String msg = "";
-//		while (!(msg = scanner.nextLine()).equals("exit")) {
-//			Message message = new Message();
-//			message.setSourceName("2");
-//			message.setToName("1");
-//			message.setMessage(msg.trim());
-//			nettyServer.writeMsg(message);
-//		}
 	}
 }
