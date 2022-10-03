@@ -1,17 +1,20 @@
-package v2;
+package com.xaohii.netty;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import javax.annotation.Resource;
 
-public class NettyServerHandler extends SimpleChannelInboundHandler<Message>{
+@Service
+public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
+	@Resource
 	private NettyServer nettyServer;
-
-	public NettyServerHandler(NettyServer nettyServer){
-		this.nettyServer = nettyServer;
-	}
+//	NettyServerHandler(NettyServer nettyServer) {
+//		this.nettyServer = nettyServer;
+//	}
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) throws Exception {
