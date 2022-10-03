@@ -1,6 +1,6 @@
 package cn.xaohii.api.controller;
 
-import cn.xaohii.api.netty.v2.Message;
+import cn.xaohii.api.netty.Message;
 import cn.xaohii.api.service.MessageServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

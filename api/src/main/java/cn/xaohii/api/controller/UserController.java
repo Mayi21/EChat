@@ -3,7 +3,6 @@
 //import cn.xaohii.api.repository.entity.UserInfo;
 //import cn.xaohii.api.service.MailServiceImpl;
 //import cn.xaohii.api.service.UserInfoServiceImpl;
-//import cn.xaohii.common.entity.AppResp;
 //import io.swagger.annotations.Api;
 //import io.swagger.annotations.ApiOperation;
 //import org.springframework.web.bind.annotation.*;

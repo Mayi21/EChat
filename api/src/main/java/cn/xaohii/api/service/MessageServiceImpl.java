@@ -1,10 +1,8 @@
 package cn.xaohii.api.service;
 
-import cn.xaohii.api.netty.v2.Message;
 import cn.xaohii.api.repository.entity.po.MessagePo;
 import cn.xaohii.api.repository.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
