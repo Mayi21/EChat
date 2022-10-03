@@ -1,4 +1,4 @@
-package cn.xaohii.api.netty.v2;
+package cn.xaohii.api.netty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

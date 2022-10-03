@@ -1,9 +1,8 @@
-package cn.xaohii.api.netty.v2;
+package cn.xaohii.api.netty;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package cn.xaohii.api.netty.v2;
+package cn.xaohii.api.netty;
 
 import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
@@ -9,7 +9,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
