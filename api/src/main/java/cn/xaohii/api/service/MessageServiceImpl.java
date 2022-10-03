@@ -1,13 +1,32 @@
 package cn.xaohii.api.service;
 
-import adapter.NettyClientAdapter;
+import cn.xaohii.api.netty.v2.Message;
+import cn.xaohii.api.repository.entity.po.MessagePo;
+import cn.xaohii.api.repository.mapper.MessageMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MessageServiceImpl {
-	@Async
-	public void sendMessage(String msg) {
-		NettyClientAdapter.sendMsg(msg);
+	@Autowired
+	private MessageMapper messageMapper;
+
+	public List<MessagePo> queryAllMessage() {
+		return messageMapper.queryAll();
+	}
+
+	public void insertData(MessagePo messagePo) {
+		messageMapper.insertData(messagePo);
+	}
+
+	public List<MessagePo> queryByUserId(Long userId) {
+		return messageMapper.queryByUserId(userId);
+	}
+
+	public List<MessagePo> queryByToUserId(Long toUserId) {
+		return messageMapper.queryByToUserId(toUserId);
 	}
 }

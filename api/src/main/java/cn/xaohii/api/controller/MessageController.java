@@ -1,9 +1,11 @@
 package cn.xaohii.api.controller;
 
+import cn.xaohii.api.netty.v2.Message;
 import cn.xaohii.api.service.MessageServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -16,7 +18,7 @@ public class MessageController {
 
 	@PostMapping("/send")
 	@ApiOperation(value = "发送消息")
-	public void sendMsg(String msg) {
-		messageService.sendMessage(msg);
+	public void sendMsg(@RequestBody Message msg) {
+//		messageService.sendMessage(msg);
 	}
 }

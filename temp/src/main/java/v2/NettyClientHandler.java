@@ -40,4 +40,10 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<Message>{
 		nettyClient.setChannel(clientName, ctx.channel());
 		super.channelActive(ctx);
 	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+//		System.out.println(cause.getMessage());
+//		super.exceptionCaught(ctx, cause);
+	}
 }

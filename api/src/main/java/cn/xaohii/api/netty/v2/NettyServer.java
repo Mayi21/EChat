@@ -1,24 +1,30 @@
-package v2;
-
-import java.util.HashMap;
-import java.util.Map;
+package cn.xaohii.api.netty.v2;
 
 import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Service;
 
-public class NettyServer {
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
+public class NettyServer implements ApplicationRunner {
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		bind();
+	}
+
 	private int port = 20803;
 
 	/**
@@ -112,22 +118,9 @@ public class NettyServer {
 				});
 		try {
 			ChannelFuture f = bootstrap.bind(port).sync();
-			f.channel().closeFuture().sync();
+//			f.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} finally {
-			bossGroup.shutdownGracefully();
-			workerGroup.shutdownGracefully();
 		}
-	}
-
-	public static void main(String[] args) {
-		final NettyServer nettyServer = new NettyServer();
-		new Thread() {
-			@Override
-			public void run() {
-				nettyServer.bind();
-			}
-		}.start();
 	}
 }
