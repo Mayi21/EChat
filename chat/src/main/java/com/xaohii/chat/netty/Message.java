@@ -1,7 +1,8 @@
-package v2;
+package com.xaohii.chat.netty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
@@ -11,7 +12,7 @@ public class Message implements Serializable {
 	private String userName;
 
 	@JsonProperty(value = "user_id")
-	private Integer userId;
+	private Long userId;
 
 
 	private String message;
@@ -20,7 +21,7 @@ public class Message implements Serializable {
 	private String toUserName;
 
 	@JsonProperty(value = "to_user_id")
-	private Integer toUserId;
+	private Long toUserId;
 
 	/**
 	 * 类型目前有：

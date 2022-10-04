@@ -10,16 +10,12 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>common</module>
-        <module>server</module>
-        <module>client</module>
         <module>api</module>
         <module>temp</module>
     </modules>
 
     <properties>
-        <spring-version>5.3.21</spring-version>
-        <netty-version>4.1.77.Final</netty-version>
+        <netty-version>4.1.42.Final</netty-version>
         <fastjson-version>2.0.12</fastjson-version>
     </properties>
 
@@ -43,36 +39,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.13.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>

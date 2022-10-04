@@ -6,6 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Map;
 
+import com.xaohii.chat.netty.Message;
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message>{
 	private NettyServer nettyServer;
 
@@ -21,7 +22,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message>{
 				break;
 			case 1:
 				// 新用户上线后
-				Integer userId = message.getUserId();
+				Long userId = message.getUserId();
 				nettyServer.setChannel(userId, channelHandlerContext.channel());
 				nettyServer.setOnlineIdToNameMap(userId, message.getUserName());
 				System.out.println(userId + "注册成功");
