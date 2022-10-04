@@ -1,14 +1,12 @@
 package v2;
 
+import com.xaohii.chat.netty.Message;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.util.Map;
-
-import com.xaohii.chat.netty.Message;
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message>{
-	private NettyServer nettyServer;
+	private v2.NettyServer nettyServer;
 
 	public NettyServerHandler(NettyServer nettyServer){
 		this.nettyServer = nettyServer;

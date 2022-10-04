@@ -154,7 +154,7 @@ public class NettyClient {
 //				LOG.info("send register info");
 				continue;
 			}
-			System.out.printf("开始和【%s】愉快聊天%n", noToUserName.get(toUserId));
+			System.out.printf("开始和【%s】愉快聊天%n", noToUserName.get(String.valueOf(toUserId)));
 			scanner.nextLine();
 			while (true) {
 				String line = scanner.nextLine();
@@ -183,7 +183,7 @@ public class NettyClient {
 		message.setUserName(userName);
 		message.setUserId(userId);
 		message.setToUserId(toUserId);
-		message.setToUserName(noToUserName.get(toUserId));
+		message.setToUserName(noToUserName.get(String.valueOf(toUserId)));
 		return message;
 	}
 
