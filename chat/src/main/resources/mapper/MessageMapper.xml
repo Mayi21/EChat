@@ -21,7 +21,7 @@
 
     <insert id="insertData" useGeneratedKeys="true" keyProperty="id" parameterType="com.xaohii.chat.repository.entity.po.MessagePo">
         insert into t_message (user_name, user_id, to_user_name, to_user_id, message, `type`, `time`)
-        values (#{userName}, #{userId}, #{toUserName}, #{toUserId}, #{message}, #{type}, #{time})
+        values (#{userName}, #{userId}, #{toUserName}, #{toUserId}, #{message}, #{type}, now())
     </insert>
 
     <select id="queryByUserId" resultMap="BaseResultMap" parameterType="long">

@@ -1,6 +1,9 @@
 package com.xaohii.chat.netty;
 
 import com.alibaba.fastjson.JSON;
+import com.xaohii.chat.repository.entity.po.MessagePo;
+import com.xaohii.chat.service.MessageServiceImpl;
+import com.xaohii.chat.utils.common.P2vUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -10,6 +13,7 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
@@ -17,42 +21,12 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Service
-//public class NettyServer {
-//	@Autowired
-//	private NettyServerHandler nettyServerHandler;
-//
-//	private int port = 20803;
-//
-//	public void bind() {
-//		System.out.println("service start successful");
-//		EventLoopGroup bossGroup = new NioEventLoopGroup();
-//		EventLoopGroup workerGroup = new NioEventLoopGroup();
-//		ServerBootstrap bootstrap = new ServerBootstrap();
-//		bootstrap.group(bossGroup, workerGroup)
-//				.channel(NioServerSocketChannel.class)
-//				.childOption(ChannelOption.SO_KEEPALIVE, true)
-//				.option(ChannelOption.SO_BACKLOG, 1024)
-//				.childHandler(new ChannelInitializer<SocketChannel>() {
-//					@Override
-//					protected void initChannel(SocketChannel socketChannel) throws Exception {
-//						ChannelPipeline pipeline = socketChannel.pipeline();
-//						pipeline.addLast("decoder", new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
-//						pipeline.addLast("encoder", new ObjectEncoder());
-//						pipeline.addLast("handler", nettyServerHandler);
-//					}
-//				});
-//		try {
-//			ChannelFuture f = bootstrap.bind(port).sync();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//	}
-//}
-
 public class NettyServer {
-	private int port = 20803;
+	@Autowired
+	private MessageServiceImpl messageService;
+	@Value("${netty.client.port}")
+	private int port;
 
 	/**
 	 * user id 到channel的映射
@@ -112,6 +86,8 @@ public class NettyServer {
 
 	//发送消息给下游设备
 	public void writeMsg(Message msg) {
+		MessagePo messagePo = P2vUtil.convertMessage2Po(msg);
+		messageService.insertData(messagePo);
 		Map<String, Channel> channelMap = getChannelMap();
 		try {
 			Channel channel = channelMap.get(String.valueOf(msg.getToUserId()));

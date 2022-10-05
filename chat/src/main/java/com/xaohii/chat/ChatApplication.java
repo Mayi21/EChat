@@ -9,11 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan(value = "com.xaohii.chat.repository.mapper")
 public class ChatApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ChatApplication.class, args);
 		NettyServer nettyServer = SpringContextUtils.getBean(NettyServer.class);
 		nettyServer.bind();
 	}
-
 }
