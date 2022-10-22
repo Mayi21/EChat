@@ -1,9 +1,9 @@
 package cn.xaohii.api.controller;
 
+import cn.xaohii.api.repository.entity.UserInfo;
 import cn.xaohii.api.service.MailServiceImpl;
 import cn.xaohii.api.service.UserInfoServiceImpl;
 import cn.xaohii.common.entity.AppResp;
-import cn.xaohii.common.entity.UserInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +31,11 @@ public class UserController {
 	@ApiOperation(value = "获取所有的用户信息")
 	public List<cn.xaohii.api.repository.entity.UserInfo> getAllUser() {
 		return userInfoService.queryAllUserInfo();
+	}
+
+	@PostMapping("/login")
+	@ApiOperation(value = "用户登录")
+	public void userLogin(@RequestBody UserInfo userInfo) {
+
 	}
 }

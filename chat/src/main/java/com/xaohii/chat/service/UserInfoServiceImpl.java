@@ -1,18 +1,16 @@
-package cn.xaohii.api.service;
+package com.xaohii.chat.service;
 
-import cn.xaohii.api.repository.entity.UserInfo;
-import cn.xaohii.api.repository.mapper.UserInfoMapper;
-import javafx.scene.input.DataFormat;
-import org.apache.catalina.User;
+import com.xaohii.chat.repository.entity.UserInfo;
+import com.xaohii.chat.repository.mapper.UserInfoMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
 public class UserInfoServiceImpl {
-	@Resource
+	@Autowired
 	private UserInfoMapper userInfoMapper;
 
 	public List<UserInfo> queryAllUserInfo() {
