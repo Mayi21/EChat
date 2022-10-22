@@ -2,19 +2,18 @@ package com.xaohii.redis.controller;
 
 
 import com.xaohii.redis.entity.UserEntity;
+import com.xaohii.redis.util.RedisUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 @RestController
 @RequestMapping(value = "/v1")
 public class RedisController {
-
-	private RedisTemplate<String, UserEntity> redisTemplate;
+	@Autowired
+	private RedisUtil redisUtil;
 
 	@PostMapping(value = "/insert")
 	public void insertUser() {
@@ -22,7 +21,7 @@ public class RedisController {
 		user.setName("xiaohei");
 		user.setAge(11);
 		user.setSex(true);
-		redisTemplate.opsForValue().set(user.getName(), user);
+		redisUtil.put(user.getName(), user);
 	}
 
 }
