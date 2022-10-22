@@ -1,66 +1,52 @@
 package v2;
 
-import java.util.concurrent.TimeUnit;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 
-public class NettyClientHandler extends SimpleChannelInboundHandler<String>{
+import java.util.Map;
+
+import com.xaohii.chat.netty.Message;
+
+public class NettyClientHandler extends SimpleChannelInboundHandler<Message>{
 	private NettyClient nettyClient;
-	private String tenantId;
-	private int attempts = 0;
 
 	public NettyClientHandler(NettyClient nettyClient){
 		this.nettyClient = nettyClient;
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext channelHandlerContext, String msg) throws Exception {
-		System.out.println("server send message" + msg);
-		channelHandlerContext.writeAndFlush(msg);
+	protected void channelRead0(ChannelHandlerContext channelHandlerContext, Message message) {
+		switch (message.getType()) {
+			case 0:
+				System.out.printf("收到一条来自 %d.%s 的消息：%s%n", message.getUserId(),
+						message.getUserName(), message.getMessage());
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				String s = message.getMessage();
+				Map<String, String> map = (Map<String, String>) JSON.parseObject(s, Map.class);
+				nettyClient.setMap(map);
+				break;
+		}
+
 	}
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("output connected!");
-		attempts = 0;
+		String clientName = ctx.channel().remoteAddress().toString();
+		System.out.println("RemoteAddress:"+clientName+"active!");
+		nettyClient.setChannel(clientName, ctx.channel());
+		super.channelActive(ctx);
 	}
 
 	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("offline");
-		//使用过程中断线重连
-		final EventLoop eventLoop = ctx.channel().eventLoop();
-		if (attempts<12){
-			attempts++;
-		}
-		int timeout = 2<<attempts;
-		eventLoop.schedule(new Runnable() {
-			@Override
-			public void run() {
-				nettyClient.start();
-			}
-		},timeout, TimeUnit.SECONDS);
-		ctx.fireChannelInactive();
-	}
-
-	@Override
-	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-		if (evt instanceof IdleStateEvent){
-			IdleStateEvent event = (IdleStateEvent)evt;
-			if (event.state().equals(IdleState.READER_IDLE)){
-				System.out.println("READER_IDLE");
-			}else if (event.state().equals(IdleState.WRITER_IDLE)){
-				//发送心跳，保持长连接
-				String s = "NettyClient"+System.getProperty("line.separator");
-				ctx.channel().writeAndFlush(s);  //发送心跳成功
-			}else if (event.state().equals(IdleState.ALL_IDLE)){
-				System.out.println("ALL_IDLE");
-			}
-		}
-		super.userEventTriggered(ctx,evt);
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		System.out.println(cause.getMessage());
+		super.exceptionCaught(ctx, cause);
 	}
 }

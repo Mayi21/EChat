@@ -2,12 +2,9 @@ package v2;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -17,62 +14,84 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+
+import com.xaohii.chat.netty.Message;
 
 public class NettyServer {
 	private int port = 20803;
 
-	//维护设备在线的表
-	private Map<String, Integer> clientMap = new HashMap<>();
+	/**
+	 * user id 到channel的映射
+	 * */
+	private Map<Long, Channel> channelMap = new HashMap<>();
 
-	public synchronized void setClient(String name) {
-		this.clientMap.put(name, 1);
+	/**
+	 * userid 到 username的映射
+	 * */
+	private Map<Long, String> onlineIdToNameMap = new HashMap<>();
+
+	private Map<String, Channel> clientName2ChannelMap = new HashMap<>();
+
+	public synchronized void setClientName2ChannelMap(String clientName, Channel channel) {
+		clientName2ChannelMap.put(clientName, channel);
 	}
 
-	public synchronized void removeClient(String name) {
-		this.clientMap.remove(name);
+	public Map<String, Channel> getClientName2ChannelMap() {
+		return this.clientName2ChannelMap;
 	}
 
-	//判断连接处里面是否有东西
-	public synchronized boolean getClientMapSize() {
-		return this.clientMap.size() > 0;
+	public synchronized void setOnlineIdToNameMap(Long userId, String userName) {
+		onlineIdToNameMap.put(userId, userName);
 	}
 
-	//维护设备连接的map 用于推送消息
-	private Map<String, Channel> channelMap = new HashMap<>();
-
-	public synchronized void setChannel(String name, Channel channel) {
-		this.channelMap.put(name, channel);
+	public Map<Long, String> getOnlineIdToNameMap() {
+		return onlineIdToNameMap;
 	}
 
-	public synchronized Map<String, Channel> getChannelMap() {
+
+	public synchronized void setChannel(Long userId, Channel channel) {
+		this.channelMap.put(userId, channel);
+	}
+
+
+	public Map<Long, Channel> getChannelMap() {
 		return this.channelMap;
+	}
+	/**
+	 * 上线通知
+	 * 新用户上线后，需要将当前的在线进行更新
+	 * */
+	public void notifyOnlineMemChange() {
+		for (String clientName : clientName2ChannelMap.keySet()) {
+			Channel channel = clientName2ChannelMap.get(clientName);
+			channel.writeAndFlush(getNotifyMessage());
+		}
+	}
+
+	public Message getNotifyMessage() {
+		String msg = JSON.toJSONString(onlineIdToNameMap);
+		Message message = new Message();
+		message.setMessage(msg);
+		message.setType(3);
+		return message;
 	}
 
 	//发送消息给下游设备
-	public boolean writeMsg(String msg) {
-		boolean errorFlag = false;
-		Map<String, Channel> channelMap = getChannelMap();
-		if (channelMap.size() == 0) {
-			return true;
-		}
-		Set<String> keySet = clientMap.keySet();
-		for (String key : keySet) {
-			try {
-				Channel channel = channelMap.get(key);
-				if (!channel.isActive()) {
-					errorFlag = true;
-					continue;
-				}
-				channel.writeAndFlush(msg + System.getProperty("line.separator"));
-			} catch (Exception e) {
-				errorFlag = true;
+	public void writeMsg(Message msg) {
+		Map<Long, Channel> channelMap = getChannelMap();
+		try {
+			Channel channel = channelMap.get(msg.getToUserId());
+			if (!channel.isActive()) {
+				System.out.println("it's not online");
+				channelMap.remove(msg.getToUserId());
 			}
+			channel.writeAndFlush(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return errorFlag;
 	}
 
 	public void bind() {
@@ -88,12 +107,8 @@ public class NettyServer {
 					@Override
 					protected void initChannel(SocketChannel socketChannel) throws Exception {
 						ChannelPipeline pipeline = socketChannel.pipeline();
-						//特殊分隔符
-						pipeline.addLast(new DelimiterBasedFrameDecoder(Integer.MAX_VALUE,
-								Unpooled.copiedBuffer(System.getProperty("line.separator").getBytes())));
-						pipeline.addLast("decoder", new StringDecoder());
-						pipeline.addLast("encoder", new StringEncoder());
-						pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));
+						pipeline.addLast("decoder", new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
+						pipeline.addLast("encoder", new ObjectEncoder());
 						pipeline.addLast("handler", new NettyServerHandler(NettyServer.this));
 					}
 				});
@@ -116,11 +131,5 @@ public class NettyServer {
 				nettyServer.bind();
 			}
 		}.start();
-		Scanner scanner = new Scanner(System.in);
-		String msg = "";
-		while (!(msg = scanner.nextLine()).equals("exit")) {
-			System.out.println(nettyServer.writeMsg(msg));
-		}
 	}
-
 }
