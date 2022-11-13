@@ -12,6 +12,9 @@
     <modules>
         <module>api</module>
         <module>temp</module>
+        <module>rpc</module>
+        <module>daily</module>
+        <module>B_NIO</module>
     </modules>
 
     <properties>
