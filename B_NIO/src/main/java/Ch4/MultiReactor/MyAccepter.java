@@ -1,4 +1,4 @@
-package Ch4;
+package Ch4.MultiReactor;
 
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -8,11 +8,8 @@ import java.nio.channels.SocketChannel;
 public class MyAccepter implements Runnable {
 	private final ServerSocketChannel serverSocketChannel;
 
-	private final Selector selector;
-
-	public MyAccepter(ServerSocketChannel socketChannel, Selector selector) {
+	public MyAccepter(ServerSocketChannel socketChannel) {
 		this.serverSocketChannel = socketChannel;
-		this.selector = selector;
 	}
 	@Override
 	public void run() {
@@ -20,6 +17,8 @@ public class MyAccepter implements Runnable {
 			SocketChannel socketChannel = serverSocketChannel.accept();
 			System.out.println("client ip address is " + socketChannel.getRemoteAddress());
 			socketChannel.configureBlocking(false);
+			Selector selector = SubReactor.nextSelector();
+			selector.wakeup();
 			socketChannel.register(selector, SelectionKey.OP_READ, new MyHandler(socketChannel));
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -12,13 +12,12 @@
     <modules>
         <module>api</module>
         <module>temp</module>
-        <module>rpc</module>
         <module>daily</module>
         <module>B_NIO</module>
     </modules>
 
     <properties>
-        <netty-version>4.1.42.Final</netty-version>
+        <netty-version>4.1.77.Final</netty-version>
         <fastjson-version>2.0.12</fastjson-version>
     </properties>
 
@@ -36,7 +35,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.9</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
