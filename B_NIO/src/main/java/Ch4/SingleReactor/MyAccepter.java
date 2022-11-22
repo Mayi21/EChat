@@ -24,6 +24,5 @@ public class MyAccepter implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 }

@@ -21,5 +21,11 @@ public class Ch1 {
 		//清空操作，清空之后读写指针都归零
 		buf.clear();
 		System.out.println("清空之后："+Arrays.toString(buf.array()));
+		/**
+		 * 注意出栈站操作应该在入站操作的前面，当我们使用ChannelHandlerContext的write方法时，
+		 * 是从流水线的当前位置倒着往前找下一个ChannelOutboundHandlerAdapter，而我们之前使用
+		 * 的ChannelInboundHandlerAdapter是从前往后找下一个，如果我们使用的是Channel的write
+		 * 方法，那么会从整个流水线的最后开始倒着往前找ChannelOutboundHandlerAdapter，一定要注意顺序。
+		 * */
 	}
 }
