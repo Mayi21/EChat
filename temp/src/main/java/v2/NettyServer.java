@@ -18,18 +18,20 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
+import com.xaohii.chat.netty.Message;
+
 public class NettyServer {
 	private int port = 20803;
 
 	/**
 	 * user id 到channel的映射
 	 * */
-	private Map<Integer, Channel> channelMap = new HashMap<>();
+	private Map<Long, Channel> channelMap = new HashMap<>();
 
 	/**
 	 * userid 到 username的映射
 	 * */
-	private Map<Integer, String> onlineIdToNameMap = new HashMap<>();
+	private Map<Long, String> onlineIdToNameMap = new HashMap<>();
 
 	private Map<String, Channel> clientName2ChannelMap = new HashMap<>();
 
@@ -41,21 +43,21 @@ public class NettyServer {
 		return this.clientName2ChannelMap;
 	}
 
-	public synchronized void setOnlineIdToNameMap(Integer userId, String userName) {
+	public synchronized void setOnlineIdToNameMap(Long userId, String userName) {
 		onlineIdToNameMap.put(userId, userName);
 	}
 
-	public Map<Integer, String> getOnlineIdToNameMap() {
+	public Map<Long, String> getOnlineIdToNameMap() {
 		return onlineIdToNameMap;
 	}
 
 
-	public synchronized void setChannel(Integer userId, Channel channel) {
+	public synchronized void setChannel(Long userId, Channel channel) {
 		this.channelMap.put(userId, channel);
 	}
 
 
-	public Map<Integer, Channel> getChannelMap() {
+	public Map<Long, Channel> getChannelMap() {
 		return this.channelMap;
 	}
 	/**
@@ -79,7 +81,7 @@ public class NettyServer {
 
 	//发送消息给下游设备
 	public void writeMsg(Message msg) {
-		Map<Integer, Channel> channelMap = getChannelMap();
+		Map<Long, Channel> channelMap = getChannelMap();
 		try {
 			Channel channel = channelMap.get(msg.getToUserId());
 			if (!channel.isActive()) {

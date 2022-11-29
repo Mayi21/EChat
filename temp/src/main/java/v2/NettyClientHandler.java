@@ -1,10 +1,13 @@
 package v2;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Map;
+
+import com.xaohii.chat.netty.Message;
 
 public class NettyClientHandler extends SimpleChannelInboundHandler<Message>{
 	private NettyClient nettyClient;
@@ -26,7 +29,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<Message>{
 				break;
 			case 3:
 				String s = message.getMessage();
-				Map<Integer, String> map = (Map<Integer, String>) JSON.parseObject(s, Map.class);
+				Map<String, String> map = (Map<String, String>) JSON.parseObject(s, Map.class);
 				nettyClient.setMap(map);
 				break;
 		}
@@ -43,7 +46,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<Message>{
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//		System.out.println(cause.getMessage());
-//		super.exceptionCaught(ctx, cause);
+		System.out.println(cause.getMessage());
+		super.exceptionCaught(ctx, cause);
 	}
 }

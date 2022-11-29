@@ -23,21 +23,22 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.xaohii.chat.netty.Message;
 public class NettyClient {
 	private final Logger LOG = LoggerFactory.getLogger(NettyClient.class);
 	private String host;
 
 	private int port;
 
-	private Map<Integer, String> noToUserName = new HashMap<>();
+	private Map<String, String> noToUserName = new HashMap<>();
 
 	private Channel channel;
 
-	private Integer userId;
+	private Long userId;
 
 	private String userName;
 
-	private Integer toUserId;
+	private Long toUserId;
 
 	private Map<String, Channel> channelMap = new HashMap<>();
 
@@ -45,8 +46,8 @@ public class NettyClient {
 		this.channelMap.put(name, channel);
 	}
 
-	public void setMap(Map<Integer, String> map) {
-		map.remove(userId);
+	public void setMap(Map<String, String> map) {
+		map.remove(String.valueOf(userId));
 		this.noToUserName = map;
 	}
 
@@ -101,16 +102,6 @@ public class NettyClient {
 		});
 	}
 
-	private void heartBeat() {
-		Message message = new Message();
-		message.setType(2);
-		channel.writeAndFlush(message);
-	}
-
-	public Channel getChannel() {
-		return channel;
-	}
-
 	public void sendMsg(Message message) {
 		Map<String, Channel> channelMap = getChannelMap();
 		for (String channelName : channelMap.keySet()) {
@@ -157,13 +148,13 @@ public class NettyClient {
 			Scanner scanner = new Scanner(System.in);
 			System.out.printf("欢迎【%s】登录%n", userName);
 			mainMenu();
-			toUserId = scanner.nextInt();
+			toUserId = scanner.nextLong();
 			if (toUserId == -1) {
 //				channel.writeAndFlush(getRegisterMessage());
 //				LOG.info("send register info");
 				continue;
 			}
-			System.out.printf("开始和【%s】愉快聊天%n", noToUserName.get(toUserId));
+			System.out.printf("开始和【%s】愉快聊天%n", noToUserName.get(String.valueOf(toUserId)));
 			scanner.nextLine();
 			while (true) {
 				String line = scanner.nextLine();
@@ -192,7 +183,7 @@ public class NettyClient {
 		message.setUserName(userName);
 		message.setUserId(userId);
 		message.setToUserId(toUserId);
-		message.setToUserName(noToUserName.get(toUserId));
+		message.setToUserName(noToUserName.get(String.valueOf(toUserId)));
 		return message;
 	}
 
@@ -214,8 +205,8 @@ public class NettyClient {
 		if (noToUserName.size() == 0) {
 			System.out.println("omaga，当前没人在线");
 		}
-		for (Integer userId : noToUserName.keySet()) {
-			System.out.printf("%d.%s%n", userId, noToUserName.get(userId));
+		for (String userId : noToUserName.keySet()) {
+			System.out.println(userId + "." + noToUserName.get(userId));
 		}
 	}
 
@@ -237,13 +228,13 @@ public class NettyClient {
 		System.out.println("请输入编号和用户名(以,号分割)");
 		String line = scanner.nextLine();
 		String[] strings = line.split(",");
-		int userId = Integer.parseInt(strings[0]);
+		long userId = Long.parseLong(strings[0]);
 		String userName = strings[1];
-		while (noToUserName.containsKey(userId)) {
+		while (noToUserName.containsKey(String.valueOf(userId))) {
 			System.out.println("当前用户ID已经存在,请重新输入编号和用户名(以,号分割)");
 			line = scanner.nextLine();
 			strings = line.split(",");
-			userId = Integer.parseInt(strings[0]);
+			userId = Long.parseLong(strings[0]);
 			userName = strings[1];
 		}
 		this.userId = userId;
