@@ -12,7 +12,7 @@ class Solution {
 	public int getLucky(String s, int k) {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < s.length(); i++) {
-			stringBuilder.append(String.valueOf(s.charAt(i) - 'a' + 1));
+			stringBuilder.append(s.charAt(i) - 'a' + 1);
 		}
 		int sum = 0;
 		for (int i = 0; i < k; i++) {
